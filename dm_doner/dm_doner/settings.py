@@ -48,6 +48,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'drf_spectacular',
     'rest_framework',
+    'client',
+    'product',
+    'basket',
 ]
 
 MIDDLEWARE = [
