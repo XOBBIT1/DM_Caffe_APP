@@ -1,7 +1,13 @@
-from django.urls import path
-from .views import ClientAPIView
+from django.urls import path, include
+from .views import ClientViewSet
+from rest_framework import routers
+
+router = routers.DefaultRouter()
+router.register(r'', ClientViewSet)
+
 
 urlpatterns = [
-    path('', ClientAPIView.as_view()),
-    path('<int:pk>/', ClientAPIView.as_view())
+    path('', include(router.urls))
+    # path('', ClientViewSet.as_view({'get': 'list'})),
+    # path('<int:pk>/', ClientViewSet.as_view({'put': 'update'}))
 ]
