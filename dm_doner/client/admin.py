@@ -6,9 +6,11 @@ from .models import Client, Address
 # Register your models here.
 
 @admin.register(Client)
-class ClientAdmin(admin.ModelAdmin):
+class UserAdmin(admin.ModelAdmin):
     model = Client
-    list_display = ("id", "full_name", 'nickname', 'phone_number', 'email', 'address', 'created_at')
+    list_display = ("id", 'username', 'phone_number', 'email', 'address', "is_staff")
+
+    filter_horizontal = ['products_basket']
 
 
 @admin.register(Address)

@@ -1,16 +1,16 @@
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from rest_framework.permissions import IsAdminUser
+from django.contrib.auth import get_user_model
 
-from .models import Client, Address
+from .models import Address
 from .serializers import ClientSerializer
 
 
 class ClientViewSet(viewsets.ModelViewSet):
-    queryset = Client.objects.all()
+    queryset = get_user_model().objects.all()
     serializer_class = ClientSerializer
-    permission_classes = [IsAdminUser,]
+    # permission_classes = [IsAdminReadOnly,]
 
     @action(methods=['get'], detail=False)
     def addresses(self, request):

@@ -50,7 +50,6 @@ INSTALLED_APPS = [
     'rest_framework',
     'client',
     'product',
-    'basket',
 ]
 
 MIDDLEWARE = [
@@ -158,3 +157,5 @@ REST_FRAMEWORK = {
         "rest_framework.parsers.JSONParser",
     ],
 }
+
+AUTH_USER_MODEL = "client.Client"
