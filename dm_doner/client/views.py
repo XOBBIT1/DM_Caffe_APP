@@ -1,16 +1,18 @@
-from rest_framework import viewsets
+from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from django.contrib.auth import get_user_model
+from rest_framework import permissions
+from rest_framework.views import APIView
 
-from .models import Address
+from .models import Address, Client
 from .serializers import ClientSerializer
 
 
 class ClientViewSet(viewsets.ModelViewSet):
     queryset = get_user_model().objects.all()
     serializer_class = ClientSerializer
-    # permission_classes = [IsAdminReadOnly,]
+    permission_classes = (permissions.IsAuthenticated,)
 
     @action(methods=['get'], detail=False)
     def addresses(self, request):
@@ -18,32 +20,41 @@ class ClientViewSet(viewsets.ModelViewSet):
         return Response({'addresses': [address for address in addresses]})
 
 
-# class ClientAPIView(APIView):
-#
-#     def get(self, request):
-#         clients = Client.objects.all()
-#         serializer_data = ClientSerializer(clients, many=True).data
-#         return Response({'clients': serializer_data})
-#
-#     def post(self, request):
-#         if Client.objects.filter(nickname=request.data.get('nickname')):
-#             return Response({"error": "Client with such nickname already exist!"}, status=404)
-#         if Client.objects.filter(email=request.data.get('email')):
-#             return Response({"error": "Client with such email already exist!"}, status=404)
-#
-#         serializer_data = ClientSerializer(data=request.data)
-#         serializer_data.is_valid(raise_exception=True)
-#         serializer_data.save()
-#         return Response({'client': serializer_data.data})
-#
-#     def put(self, request, **kwargs):
-#         try:
-#             pk = kwargs.get("pk", None)
-#             instance = Client.objects.get(pk=pk)
-#         except Exception:
-#             return Response({"error": " Such client dosen't exist!"}, status=404)
-#
-#         serializer_data = ClientSerializer(data=request.data, instance=instance)
-#         serializer_data.is_valid(raise_exception=True)
-#         serializer_data.save()
-#         return Response({'client': serializer_data.data})
+class AddProductToBasketAPIView(APIView):
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def get(self, request, **kwargs):
+        try:
+            pk = kwargs.get("pk", None)
+            client = Client.objects.get(pk=pk)
+        except Exception:
+            return Response({"error": " Such client dosen't exist!"}, status=404)
+        return Response({"products": client.products_basket.all().values()})
+
+    def post(self, request, **kwargs):
+        try:
+            pk = kwargs.get("pk", None)
+            client = Client.objects.get(pk=pk)
+        except Exception:
+            return Response({"error": " Such client dosen't exist!"}, status=404)
+
+        product_id = request.data.get("product_id")
+        if not product_id:
+            return Response({"error": "product_id is required"}, status=status.HTTP_400_BAD_REQUEST)
+
+        client.products_basket.add(product_id)
+        return Response('Product added to basket')
+
+    def delete(self, request, **kwargs):
+        try:
+            pk = kwargs.get("pk", None)
+            client = Client.objects.get(pk=pk)
+        except Exception:
+            return Response({"error": " Such client dosen't exist!"}, status=404)
+
+        product_id = request.data.get("product_id")
+        if not product_id:
+            return Response({"error": "product_id is required"}, status=status.HTTP_400_BAD_REQUEST)
+
+        client.products_basket.remove(product_id)
+        return Response('Product deleted from basket')

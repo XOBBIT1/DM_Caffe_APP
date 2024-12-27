@@ -16,6 +16,7 @@ drf-spectacular = "*"
 django-rest-swagger = "*"
 django-filter = "*"
 pillow = "*"
+djangorestframework-simplejwt = "*"
 
 [dev-packages]
 

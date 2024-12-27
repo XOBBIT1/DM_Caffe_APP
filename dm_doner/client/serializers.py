@@ -13,3 +13,9 @@ class ClientSerializer(serializers.ModelSerializer):
     class Meta:
         model = Client
         fields = ['first_name', 'last_name', 'username', 'phone_number', 'email', 'address']
+
+
+class BasketSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Client
+        fields = ['products_basket',]
